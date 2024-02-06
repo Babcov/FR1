@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Отправка сообщения</title>
+    <style>
+        body {
+            background-color: #87CEEB;
+        }
+    </style>
+</head>
+<body>
+    <h1>Отправка сообщения абоненту</h1>
+    
+    <form id="sendForm">
+        <label for="msgId">ID сообщения:</label>
+        <input type="number" id="msgId" required>
+        
+        <label for="phone">Номер абонента:</label>
+        <input type="text" id="phone" required>
+        
+        <label for="text">Текст сообщения:</label>
+        <textarea id="text" rows="4" required></textarea>
+        
+        <button type="submit">Отправить</button>
+    </form>
+    
+    <script>
+        document.getElementById('sendForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Получение значений из формы
+            var msgId = document.getElementById('msgId').value;
+            var phone = document.getElementById('phone').value;
+            var text = document.getElementById('text').value;
+            
+            // Создание объекта сообщения
+            var message = {
+                id: parseInt(msgId),
+                phone: parseInt(phone),
+                text: text
+            };
+            
+            // Отправка сообщения на сервер
+            fetch('/send/' + msgId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Ошибка в запросе');
+                }
+            })
+            .then(function(data) {
+                // Обработка успешного выполнения
+                console.log(data);
+                alert('Сообщение успешно отправлено');
+            })
+            .catch(function(error) {
+                // Обработка ошибки
+                console.error(error);
+                alert('Произошла ошибка при отправке сообщения');
+            });
+        });
+    </script>
+</body>
+</html>
